@@ -1,6 +1,12 @@
 """
-A query transformer is a function that accepts a program and returns a program, plus a priority level. Higher priority transformers are placed closer to the front of the list. We’re ensuring is a function, because we’re going to evaluate it later 31 .
-We’ll assume there won’t be an enormous number of transformer additions, and walk the list linearly to add a new one. We’ll leave a note in case this assumption turns out to be false — a binary search is much more time-optimal for long lists, but adds a little complexity and doesn’t really speed up short lists.
+A query transformer is a function that accepts a program and returns a program, plus a priority level.
+Higher priority transformers are placed closer to the front of the list. We’re ensuring is a function,
+because we’re going to evaluate it later 31 .
+We’ll assume there won’t be an enormous number of transformer additions,
+and walk the list linearly to add a new one.
+We’ll leave a note in case this assumption turns out to be false —
+a binary search is much more time-optimal for long lists,
+but adds a little complexity and doesn’t really speed up short lists.
 """
 
 class Transformer:

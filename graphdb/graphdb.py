@@ -5,15 +5,15 @@ import json
 
 class GraphDB:
 
-    def __init__(self):
-        self.graph = {}
+    # def __init__(self):
+    #    self.graph = {}
 
     @staticmethod
     def graph(v, e):
         """
         Factory for the creation of Graphs.
-        :param vertices: vertices
-        :param edges: edges
+        :param v: vertices
+        :param e: edges
         :return: Graph
         """
         graph = Graph()  # Setup of Graph is in __init__
@@ -38,23 +38,14 @@ class GraphDB:
 
         return graph
 
-"""
-The V method. Builds a new query, then uses our helper to populate the initial query program.
-This makes use of the pipetype, which we’ll look at soon.
-Note that is JS parlance for “please pass me an array of this function’s arguments”.
-You would be forgiven for supposing that is already an array, since it behaves like one in many situations,
-but it is lacking much of the functionality we utilize in modern JavaScript arrays.
-"""
-    def v(self, arguments):
+    @staticmethod
+    def query(graph):
         """
-         Dagoba.G.v = function() {                                         # a query initializer: g.v() -> query
-           var query = Dagoba.query(this)
-           query.add('vertex', [].slice.call(arguments))                   # add vertex as first query pipe
-           return query
-         }
+
+        :param graph:
+        :return:
         """
-        q = Query(g)
-        q.add(arguments)
+        q = Query(graph)
         return q
 
     @staticmethod
@@ -64,10 +55,12 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
           var obj = JSON.parse(str)                                       # this could throw
           return Dagoba.graph(obj.V, obj.E)
         """
-        pass
+        obj = json.loads(s)
+        return GraphDB.graph(obj.V, obj.E)
 
     # A gremlin is a creature that travels through the graph doing our bidding.
-    def make_gremlin(self, vertex, state):
+    @staticmethod
+    def make_gremlin(vertex, state):
         """
         Dagoba.makeGremlin = function(vertex, state) {                    # gremlins are simple creatures:
           return {vertex: vertex, state: state || {} }                    # a current vertex, and some state
@@ -75,7 +68,8 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
         """
         pass
 
-    def goto_vertex(self, gremlin, vertex):
+    @staticmethod
+    def goto_vertex(gremlin, vertex):
         """
         Dagoba.gotoVertex = function(gremlin, vertex) {                   # clone the gremlin
           return Dagoba.makeGremlin(vertex, gremlin.state)                # THINK: add path tracking here?
@@ -83,7 +77,8 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
         """
         pass
 
-    def filter_edges(self, filter):
+    @staticmethod
+    def filter_edges(ofilter):
         """
         Dagoba.filterEdges = function(filter) {
           return function(edge) {
@@ -102,7 +97,8 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
         """
         pass
 
-    def object_filter(self, filter):
+    @staticmethod
+    def object_filter(thing, ofilter):
         """
         Dagoba.objectFilter = function(thing, filter) {      # thing has to match all of filter's properties
           for(var key in filter)
@@ -112,9 +108,10 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
           return true
         }
         """
-        pass
+        return all(thing[key] == ofilter[key] for key in ofilter)
 
-    def clean_vertex(self, key, value):
+    @staticmethod
+    def clean_vertex(key, value):
         """
         Dagoba.cleanVertex = function(key, value) {                       # for JSON.stringify
           return (key == '_in' || key == '_out') ? undefined : value
@@ -122,7 +119,8 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
         """
         pass
 
-    def clean_edge(self, key, value):
+    @staticmethod
+    def clean_edge(key, value):
         """
         Dagoba.cleanEdge = function(key, value) {
           return (key == '_in' || key == '_out') ? value._id : value
@@ -130,7 +128,8 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
         """
         pass
 
-    def jsonify(self, graph):
+    @staticmethod
+    def jsonify(graph):
         """
         Dagoba.jsonify = function(graph) {                                # kids, don't hand code JSON
           return '{"V":' + JSON.stringify(graph.vertices, Dagoba.cleanVertex)
@@ -140,7 +139,8 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
         """
         pass
 
-    def persist(self, graph, name):
+    @staticmethod
+    def persist(graph, name):
         """
         Dagoba.persist = function(graph, name) {
           name = name || 'graph'
@@ -148,7 +148,8 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
         }
         """
 
-    def depersist(self, name):
+    @staticmethod
+    def depersist( name):
         """
         Dagoba.depersist = function (name) {
           name = 'DAGOBA::' + (name || 'graph')
@@ -158,7 +159,8 @@ but it is lacking much of the functionality we utilize in modern JavaScript arra
         """
         pass
 
-    def error(self, msg):
+    @staticmethod
+    def error( msg):
         """
         Dagoba.error = function(msg) {
           console.log(msg)

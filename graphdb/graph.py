@@ -1,5 +1,6 @@
 from graphdb.vertex import Vertex
 from graphdb.edge import Edge
+from graphdb import GraphDB
 
 
 class Graph:
@@ -59,6 +60,25 @@ class Graph:
         """
         for e in edges:
             self.add_edge(Edge(label=e["_label"], _in=e["_in"], _out=e["_out"]))
+
+    """
+    The V method. Builds a new query, then uses our helper to populate the initial query program.
+    This makes use of the pipetype, which we’ll look at soon.
+    Note that is JS parlance for “please pass me an array of this function’s arguments”.
+    You would be forgiven for supposing that is already an array, since it behaves like one in many situations,
+    but it is lacking much of the functionality we utilize in modern JavaScript arrays.
+    """
+    def v(self, *args):
+        """
+         Dagoba.G.v = function() {                                         # a query initializer: g.v() -> query
+           var query = Dagoba.query(this)
+           query.add('vertex', [].slice.call(arguments))                   # add vertex as first query pipe
+           return query
+         }
+        """
+        query = GraphDB.query(self)
+        query.add('vertex', args)
+        return query
 
     def find_vertices(self, vertices=None):
         """

@@ -1,3 +1,6 @@
+from collections import namedtuple
+
+Step = namedtuple('Step', 'pipe_type, args')
 
 
 class Query:
@@ -8,33 +11,14 @@ class Query:
         self.program = []       # list of steps to take
         self.gremlins = []      # gremlins for each step
 
-    def add(self, pipetype, args):
-        step = [pipetype, args]  # Todo: Should probably be a namedtuple
+    def add(self, pipe_type, args):
+        step = Step(pipe_type=pipe_type, args=args)
         self.program.append(step)
-        return self # Todo: Not sure about this
+        return self  # Todo: Not sure about this
 
     def run(self):
         pass
 
-
-# Query interface
-# TODO implement Query interface
-"""
-Dagoba.Q = {}                                                     # prototype
-"""
-
-"""
-Dagoba.query = function(graph) {                           # factory (only called by a graph's query initializers)
-  var query = Object.create( Dagoba.Q )
-
-  query.   graph = graph                                          # the graph itself
-  query.   state = []                                             # state for each step
-  query. program = []                                             # list of steps to take
-  query.gremlins = []                                             # gremlins for each step
-
-  return query
-}
-"""
 
 """
 Dagoba.Q.run = function() {                                       # our virtual machine for query processing

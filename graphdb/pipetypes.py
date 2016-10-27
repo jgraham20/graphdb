@@ -4,7 +4,7 @@ Once we understand how each one works, we’ll have a better basis for understan
 how they’re invoked and sequenced together in the interpreter.
 """
 
-class Pipe:
+class PipeTypes:
 
     def __init__(self):
         self.pipeType = {}
