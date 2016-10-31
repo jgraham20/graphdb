@@ -1,6 +1,6 @@
-from graphdb.vertex import Vertex
 from graphdb.edge import Edge
-from graphdb import GraphDB
+from graphdb.vertex import Vertex
+from graphdb.query import Query
 
 
 class Graph:
@@ -76,11 +76,11 @@ class Graph:
            return query
          }
         """
-        query = GraphDB.query(self)
+        query = Query(self)
         query.add('vertex', args)
         return query
 
-    def find_vertices(self, vertices=None):
+    def find_vertices(self, vertices=None, *args):
         """
         Dagoba.G.findVertices = function(args) {                          # our general vertex finding function
           if(typeof args[0] == 'object')
@@ -125,7 +125,8 @@ class Graph:
         else:
             return None
 
-    def search_vertices(self, vertex_filter):
+    @staticmethod
+    def search_vertices(vertex, vfilter):
         """
         Dagoba.G.searchVertices = function(filter) {                      # find vertices that match obj's key-value pairs
           return this.vertices.filter(function(vertex) {

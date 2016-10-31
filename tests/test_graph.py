@@ -1,34 +1,9 @@
 from graphdb.graph import Graph
 from graphdb.vertex import Vertex
-from graphdb import GraphDB
-import json
+from graphdb.bigleaf import BigLeaf
 
 
-def test_add_vertex():
-    g = Graph()
-
-    v1 = Vertex('N1')
-    g.add_vertex(v1)
-    assert v1.get_id() == 1
-
-    v2 = Vertex('N2')
-    g.add_vertex(v2)
-    assert v2.get_id() == 2
-
-    v3 = Vertex('N3')
-    g.add_vertex(v3)
-    assert v3.get_id() == 3
-
-
-def test_add_edge():
-    pass
-    # g.addEdge({_out: 10, _in: 30, _label: 'parent'})
-    # g.addEdge({_out: 10, _in: 'charlie', _label: 'knows'})
-
-
-def test_build_graph():
-    gdb = GraphDB()
-    vertices = """
+vertices = """
     [
         {
             "_id": 1,
@@ -56,7 +31,7 @@ def test_build_graph():
         }
     ]"""
 
-    edges = """
+edges = """
     [
     {
         "_out": 1,
@@ -145,7 +120,37 @@ def test_build_graph():
     }
 ]  """
 
-    g = GraphDB.graph(vertices, edges)
+def test_add_vertex():
+    g = Graph()
+
+    v1 = Vertex('N1')
+    g.add_vertex(v1)
+    assert v1.get_id() == 1
+
+    v2 = Vertex('N2')
+    g.add_vertex(v2)
+    assert v2.get_id() == 2
+
+    v3 = Vertex('N3')
+    g.add_vertex(v3)
+    assert v3.get_id() == 3
+
+def test_add_edge():
+    pass
+    # g.addEdge({_out: 10, _in: 30, _label: 'parent'})
+    # g.addEdge({_out: 10, _in: 'charlie', _label: 'knows'})
+
+def test_v():
+    gdb = BigLeaf()
+
+    g = BigLeaf.graph(vertices, edges)
+
+    q = g.v(1)
+
+def test_build_graph():
+    gdb = BigLeaf()
+
+    g = BigLeaf.graph(vertices, edges)
     assert len(g.edges) == 17
     assert len(g.vertices) == 6
 

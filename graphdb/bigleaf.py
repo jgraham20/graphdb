@@ -1,12 +1,12 @@
 from graph import Graph
-from query import Query
+
 import json
 
 
-class GraphDB:
+class BigLeaf:
 
-    # def __init__(self):
-    #    self.graph = {}
+    def __init__(self):
+        self.graph = {}
 
     @staticmethod
     def graph(v, e):
@@ -39,16 +39,6 @@ class GraphDB:
         return graph
 
     @staticmethod
-    def query(graph):
-        """
-
-        :param graph:
-        :return:
-        """
-        q = Query(graph)
-        return q
-
-    @staticmethod
     def from_string(s):
         """
         Dagoba.fromString = function(str) {                               # another graph constructor
@@ -56,7 +46,7 @@ class GraphDB:
           return Dagoba.graph(obj.V, obj.E)
         """
         obj = json.loads(s)
-        return GraphDB.graph(obj.V, obj.E)
+        return BigLeaf.graph(obj.V, obj.E)
 
     # A gremlin is a creature that travels through the graph doing our bidding.
     @staticmethod
@@ -78,7 +68,7 @@ class GraphDB:
         pass
 
     @staticmethod
-    def filter_edges(ofilter):
+    def filter_edges(edge, ofilter):
         """
         Dagoba.filterEdges = function(filter) {
           return function(edge) {
@@ -95,7 +85,45 @@ class GraphDB:
           }
         }
         """
-        pass
+        if not ofilter:
+            return True
+        if type(ofilter) is str:
+            return edge.get_label() == ofilter
+        if type(ofilter) is list:
+            return any(item == edge.get_label() for item in ofilter)
+
+        return BigLeaf.object_filter(edge, ofilter)
+
+    """
+    Dagoba.addPipetype = function(name, fun) {                        # adds a new method to our query object
+      Dagoba.Pipetypes[name] = fun
+      Dagoba.Q[name] = function() {
+        return this.add(name, [].slice.apply(arguments)) }            # capture the pipetype and args
+    }
+    """
+
+    """
+    Dagoba.getPipetype = function(name) {
+      var pipetype = Dagoba.Pipetypes[name]                           # a pipe type is just a function
+
+      if(!pipetype)
+        Dagoba.error('Unrecognized pipe type: ' + name)
+
+      return pipetype || Dagoba.fauxPipetype
+    }
+    """
+
+    """
+    If we can’t ﬁnd a pipetype, we generate an error and return the default pipetype,
+    which acts like an empty conduit: if a message comes in one side, it gets passed out the other.
+    """
+
+    """
+    Dagoba.fauxPipetype = function(graph, args, maybe_gremlin) {      # if you can't find a pipe type
+      return maybe_gremlin || 'pull'                                  # just keep things flowing along
+    }
+
+    """
 
     @staticmethod
     def object_filter(thing, ofilter):

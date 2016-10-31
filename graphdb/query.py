@@ -13,6 +13,7 @@ class Query:
 
     def add(self, pipe_type, args):
         step = Step(pipe_type=pipe_type, args=args)
+        print("Add Step: " + str(step))
         self.program.append(step)
         return self  # Todo: Not sure about this
 

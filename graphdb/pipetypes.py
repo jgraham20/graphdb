@@ -4,7 +4,15 @@ Once we understand how each one works, we’ll have a better basis for understan
 how they’re invoked and sequenced together in the interpreter.
 """
 
+
 class PipeTypes:
+
+    """
+    Gremlin States:
+    done
+    pull
+    
+    """
 
     def __init__(self):
         self.pipeType = {}
@@ -23,37 +31,6 @@ This is what enables our method-chaining API.
 Note that adding a new pipetype with the same name replaces the existing one,
 which allows run- time modiﬁcation of existing pipetypes.
 What’s the cost of this decision? What are the alternatives?
-"""
-
-"""
-Dagoba.addPipetype = function(name, fun) {                        # adds a new method to our query object
-  Dagoba.Pipetypes[name] = fun
-  Dagoba.Q[name] = function() {
-    return this.add(name, [].slice.apply(arguments)) }            # capture the pipetype and args
-}
-"""
-
-"""
-Dagoba.getPipetype = function(name) {
-  var pipetype = Dagoba.Pipetypes[name]                           # a pipe type is just a function
-
-  if(!pipetype)
-    Dagoba.error('Unrecognized pipe type: ' + name)
-
-  return pipetype || Dagoba.fauxPipetype
-}
-"""
-
-"""
-If we can’t ﬁnd a pipetype, we generate an error and return the default pipetype,
-which acts like an empty conduit: if a message comes in one side, it gets passed out the other.
-"""
-
-"""
-Dagoba.fauxPipetype = function(graph, args, maybe_gremlin) {      # if you can't find a pipe type
-  return maybe_gremlin || 'pull'                                  # just keep things flowing along
-}
-
 """
 
 """
@@ -131,7 +108,9 @@ Dagoba.addPipetype('unique', function(graph, args, gremlin, state) {
 })
 """
 """
-We’ve seen two simplistic ways of ﬁltering, but sometimes we need more elaborate constraints. What if we want to ﬁnd all of Thor’s siblings whose weight is greater than their height 22 ? This query would give us our answer:
+We’ve seen two simplistic ways of ﬁltering, but sometimes we need more elaborate constraints.
+What if we want to ﬁnd all of Thor’s siblings whose weight is greater than their height 22 ?
+This query would give us our answer:
 """
 """
 Dagoba.addPipetype('filter', function(graph, args, gremlin, state) {
@@ -152,11 +131,12 @@ Dagoba.addPipetype('filter', function(graph, args, gremlin, state) {
 """
 
 """
-We don’t always want all the results at once. Sometimes we only need a handful of results; say we want a dozen of Thor’s contemporaries, so we walk all the way back to the primeval cow Auumbla:
-
-Without the pipe that query could take quite a while to run, but thanks to our lazy evaluation strategy the query with the pipe is very e"cient.
-
-Sometimes we just want one at a time: we’ll process the result, work with it, and then come back for another one. This pipetype allows us to do that as well.
+We don’t always want all the results at once. Sometimes we only need a handful of results; say we want a dozen of
+Thor’s contemporaries, so we walk all the way back to the primeval cow Auumbla:
+Without the pipe that query could take quite a while to run, but thanks to our
+lazy evaluation strategy the query with the pipe is very e"cient.
+Sometimes we just want one at a time: we’ll process the result, work with it,
+and then come back for another one. This pipetype allows us to do that as well.
 """
 
 """
