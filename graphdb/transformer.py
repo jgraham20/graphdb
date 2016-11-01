@@ -9,10 +9,14 @@ a binary search is much more time-optimal for long lists,
 but adds a little complexity and doesn’t really speed up short lists.
 """
 
+
 class Transformer:
 
     def __init__(self):
         self.T = []
+
+    def transform(self, program):
+        return program
 
 """
 

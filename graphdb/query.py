@@ -1,4 +1,5 @@
 from collections import namedtuple
+from graphdb.graphdb import GraphDB
 
 Step = namedtuple('Step', 'pipe_type, args')
 
@@ -18,6 +19,7 @@ class Query:
         return self  # Todo: Not sure about this
 
     def run(self):
+        self.program = GraphDB.transform(self.program)
         pass
 
 

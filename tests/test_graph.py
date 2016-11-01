@@ -1,6 +1,6 @@
 from graphdb.graph import Graph
 from graphdb.vertex import Vertex
-from graphdb.bigleaf import BigLeaf
+from graphdb.graphdb import GraphDB
 
 
 vertices = """
@@ -141,16 +141,16 @@ def test_add_edge():
     # g.addEdge({_out: 10, _in: 'charlie', _label: 'knows'})
 
 def test_v():
-    gdb = BigLeaf()
+    gdb = GraphDB()
 
-    g = BigLeaf.graph(vertices, edges)
+    g = graph(vertices, edges)
 
     q = g.v(1)
 
 def test_build_graph():
-    gdb = BigLeaf()
+    gdb = GraphDB()
 
-    g = BigLeaf.graph(vertices, edges)
+    g = graph(vertices, edges)
     assert len(g.edges) == 17
     assert len(g.vertices) == 6
 
