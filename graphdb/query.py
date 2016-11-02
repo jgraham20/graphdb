@@ -20,7 +20,22 @@ class Query:
 
     def run(self):
         self.program = GraphDB.transform(self.program)
-        pass
+        prog_len = len(self.program) - 1
+        maybe_gremlin = False
+        pc = prog_len
+        results = []
+        done = -1
+
+        step = state = pipetype = None
+
+        # Driver Loop
+        while done < prog_len:
+
+            step = self.program[pc]
+            state = self.state[pc] or []
+            pipetype = GraphDB.get_pipe_type()
+
+
 
 
 """

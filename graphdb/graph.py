@@ -52,60 +52,26 @@ class Graph:
         :return:
         """
         for v in vertices:
-            self.add_vertex(Vertex(name=v["name"], vid=v["_id"]))
+            self.add_vertex(Vertex(name=v.name, id=v.id))
 
     def add_edges(self, edges):
         """
         Add edges in List
         """
         for e in edges:
-            self.add_edge(Edge(label=e["_label"], _in=e["_in"], _out=e["_out"]))
+            self.add_edge(Edge(label=e.label, _in=e.e_in, _out=e.e_out))
 
-    """
-    The V method. Builds a new query, then uses our helper to populate the initial query program.
-    This makes use of the pipetype, which we’ll look at soon.
-    Note that is JS parlance for “please pass me an array of this function’s arguments”.
-    You would be forgiven for supposing that is already an array, since it behaves like one in many situations,
-    but it is lacking much of the functionality we utilize in modern JavaScript arrays.
-    """
     def v(self, *args):
-        """
-         Dagoba.G.v = function() {                                         # a query initializer: g.v() -> query
-           var query = Dagoba.query(this)
-           query.add('vertex', [].slice.call(arguments))                   # add vertex as first query pipe
-           return query
-         }
-        """
         query = Query(self)
         query.add('vertex', args)
         return query
 
     def find_vertices(self, vertices=None, *args):
-        """
-        Dagoba.G.findVertices = function(args) {                          # our general vertex finding function
-          if(typeof args[0] == 'object')
-            return this.searchVertices(args[0])
-          else if(args.length == 0)
-            return this.vertices.slice()                                  # OPT: slice is costly with lots of vertices
-          else
-            return this.findVerticesByIds(args)
-        }
-        """
         # Fixme
         if not vertices:
             return list(self.vertices)
 
     def find_vertices_by_ids(self, ids):
-        """
-        Dagoba.G.findVerticesByIds = function(ids) {
-          if(ids.length == 1) {
-            var maybe_vertex = this.findVertexById(ids[0])                # maybe_vertex is either a vertex or undefined
-            return maybe_vertex ? [maybe_vertex] : []
-          }
-
-          return ids.map( this.findVertexById.bind(this) ).filter(Boolean)
-        }
-        """
         if len(ids) == 1:
             maybe_vertex = self.find_vertex_by_id(ids[0])
             if maybe_vertex:
@@ -127,13 +93,6 @@ class Graph:
 
     @staticmethod
     def search_vertices(vertex, vfilter):
-        """
-        Dagoba.G.searchVertices = function(filter) {                      # find vertices that match obj's key-value pairs
-          return this.vertices.filter(function(vertex) {
-            return Dagoba.objectFilter(vertex, filter)
-          })
-        }
-        """
         # Fixme
         #d = {k: v for k, v in self.vertices.items() if v > 0}
         pass
@@ -144,28 +103,23 @@ class Graph:
         :param vertex:
         :return:
         """
-        return vertex.get_out_edges()
-
+        return vertex.v_out
 
     def find_in_edges(self, vertex):
         """
         Get all IN edges for the vertex
         :return:
         """
-        return vertex.get_out_edges()
+        return vertex.v_in
 
     def __repr__(self):
-        """
-        Dagoba.G.toString = function() { return Dagoba.jsonify(this) }    # serialization
-        """
-
-        return "WIP" # Fixme
+        return "WIP"  # Fixme
 
     def jsonify(self):
         """
         Return a JSON representation of the Graph.
         :return:
         """
-        pass # Fixme
+        pass  # Fixme
 
 

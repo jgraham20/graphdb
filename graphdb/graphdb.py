@@ -105,31 +105,14 @@ class GraphDB:
 
     @staticmethod
     def clean_vertex(key, value):
-        """
-        Dagoba.cleanVertex = function(key, value) {                       # for JSON.stringify
-          return (key == '_in' || key == '_out') ? undefined : value
-        }
-        """
         pass
 
     @staticmethod
     def clean_edge(key, value):
-        """
-        Dagoba.cleanEdge = function(key, value) {
-          return (key == '_in' || key == '_out') ? value._id : value
-        }
-        """
         pass
 
     @staticmethod
     def jsonify(graph):
-        """
-        Dagoba.jsonify = function(graph) {                                # kids, don't hand code JSON
-          return '{"V":' + JSON.stringify(graph.vertices, Dagoba.cleanVertex)
-               + ',"E":' + JSON.stringify(graph.edges,    Dagoba.cleanEdge)
-               + '}'
-        }
-        """
         # Todo: This should only write valid parts.
         return '{"V":' + json.dumps(graph.vertices) + ',"E":' + json.dumps(graph.edges) + '}'
 
