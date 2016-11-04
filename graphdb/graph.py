@@ -5,8 +5,9 @@ from graphdb.query import Query
 
 class Graph:
 
-    def __init__(self):
+    def __init__(self, db_instance):
 
+        self.dbinstance = db_instance
         self.edges = []
         self.vertices = []
         self.vertexIndex = {}

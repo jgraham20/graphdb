@@ -103,25 +103,25 @@ class GraphDB:
         """
         return all(thing[key] == ofilter[key] for key in ofilter)
 
-    @staticmethod
-    def clean_vertex(key, value):
+    @classmethod
+    def clean_vertex(cls, key, value):
         pass
 
-    @staticmethod
-    def clean_edge(key, value):
+    @classmethod
+    def clean_edge(cls, key, value):
         pass
 
-    @staticmethod
-    def jsonify(graph):
+    @classmethod
+    def jsonify(cls, graph):
         # Todo: This should only write valid parts.
         return '{"V":' + json.dumps(graph.vertices) + ',"E":' + json.dumps(graph.edges) + '}'
 
-    @staticmethod
-    def persist(graph, name):
+    @classmethod
+    def persist(cls, graph, name):
         pass  # Todo
 
-    @staticmethod
-    def depersist( name):
+    @classmethod
+    def depersist(cls, name):
         pass  # Todo
 
     @staticmethod
@@ -133,15 +133,14 @@ class GraphDB:
         """
         pass
 
-    @staticmethod
-    def graph(v, e):
+    def graph(self, v, e):
         """
         Factory for the creation of Graphs.
         :param v: vertices
         :param e: edges
         :return: Graph
         """
-        mygraph = Graph()  # Setup of Graph is in __init__
+        mygraph = Graph(self)  # Setup of Graph is in __init__
 
         if isinstance(v, str):
             vertices = json.loads(v)
