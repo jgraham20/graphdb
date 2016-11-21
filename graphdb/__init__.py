@@ -1,1 +1,1 @@
-from graphdb import GraphDB
+from .graphdb import GraphDB

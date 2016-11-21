@@ -7,27 +7,27 @@ class Edge(object):
 
     @property
     def label(self):
-        return self.label
+        return self._label
 
     @label.setter
     def label(self, label):
-        self.label = label
+        self._label = label
 
     @property
     def e_out(self):
-        return self.e_out
+        return self._e_out
 
     @property
     def e_in(self):
-        return self.e_in
+        return self._e_in
 
     @e_out.setter
-    def e_out(self, _out):
-        self.e_out = _out
+    def e_out(self, value):
+        self._e_out = value
 
     @e_in.setter
-    def e_in(self, _in):
-        self.e_in = _in
+    def e_in(self, value):
+        self._e_in = value
 
     def get_in(self):
         return self.e_in

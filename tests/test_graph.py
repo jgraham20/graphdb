@@ -120,37 +120,48 @@ edges = """
     }
 ]  """
 
+
 def test_add_vertex():
     g = Graph()
 
     v1 = Vertex('N1')
     g.add_vertex(v1)
-    assert v1.get_id() == 1
+    assert v1.vertex_id == 1
 
     v2 = Vertex('N2')
     g.add_vertex(v2)
-    assert v2.get_id() == 2
+    assert v2.vertex_id == 2
 
     v3 = Vertex('N3')
     g.add_vertex(v3)
-    assert v3.get_id() == 3
+    assert v3.vertex_id == 3
+
 
 def test_add_edge():
     pass
     # g.addEdge({_out: 10, _in: 30, _label: 'parent'})
     # g.addEdge({_out: 10, _in: 'charlie', _label: 'knows'})
 
+
 def test_v():
-    gdb = GraphDB()
+    gdb = GraphDB('Test_V')
+    g = gdb.graph(vertices, edges)
 
-    g = graph(vertices, edges)
+    v = g.v(1)._in().run()
+    #v1 = v._in()
+    #v2 = v1.run()
+    print(v)
+    #._in('knows')._out().run()
 
-    q = g.v(1)
+    #o = v.out('knows').out().run()
+
+    print(v)
+
 
 def test_build_graph():
-    gdb = GraphDB()
 
-    g = graph(vertices, edges)
+    gdb = GraphDB('Test_Build_Graph')
+    g = gdb.graph(vertices, edges)
     assert len(g.edges) == 17
     assert len(g.vertices) == 6
 

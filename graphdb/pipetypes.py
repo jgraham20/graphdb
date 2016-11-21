@@ -3,9 +3,28 @@ Pipetypes make up the core functionality of our system.
 Once we understand how each one works, we’ll have a better basis for understanding
 how they’re invoked and sequenced together in the interpreter.
 """
+from functools import partial
+
+from functools import wraps
 
 
-class PipeTypes:
+class GenerativeBase(object):
+    def _generate(self):
+        s = self.__class__.__new__(self.__class__)
+        s.__dict__ = self.__dict__.copy()
+        return s
+
+
+def _generative(func):
+    @wraps(func)
+    def decorator(self, *args, **kw):
+        self = self._generate()
+        func(self, *args, **kw)
+        return self
+    return decorator
+
+
+class PipeTypes(GenerativeBase):
 
     """
     Gremlin States:
@@ -14,35 +33,124 @@ class PipeTypes:
     
     """
 
-    def __init__(self):
-        self.pipeType = {}
+    def __init__(self, graph):
+        self.graph = graph
+        # self.pipeTypes = {'_in': partial(self.traversal_in_pipe),
+        #                 '_out': partial(self.traversal_out_pipe)}
 
-"""
-Dagoba.Pipetypes = {}                                             # every pipe has a type
-"""
+    def simple_traversal(self, direction):                     # handles basic in and out pipetypes
 
-"""
-The pipetype’s function is added to the list of pipetypes, and then a new method is added to the query object.
-Every pipetype must have a corresponding query method. That method adds a new step to the query program,
-along with its arguments. When we evaluate the call returns a query object,
-the call adds a new step and returns the query object, and the call does the same.
-This is what enables our method-chaining API.
+        if direction == 'out':
+            find_method = 'findOutEdges'
+            edge_list = '_out'
+        else:
+            find_method = 'findInEdges'
+            edge_list = '_in'
 
-Note that adding a new pipetype with the same name replaces the existing one,
-which allows run- time modiﬁcation of existing pipetypes.
-What’s the cost of this decision? What are the alternatives?
-"""
+        #@_generative
+        def traverse(graph, args, gremlin, state):
+            if not gremlin and (not state.edges or not len(state.edges)):         # query initialization
+                return 'pull'
 
-"""
-# BUILT-IN PIPE TYPES
-"""
+            if not state.edges or not len(state.edges):  # state initialization
+                state.gremlin = gremlin
+                state.edges = graph[find_method](gremlin.vertex).filter(graph.filterEdges(args[0]))
 
-"""
-Most pipetypes we meet will take a gremlin and produce more gremlins,
-but this particular pipetype generates gremlins from just a string.
-Given an vertex ID it returns a single new gremlin.
-Given a query it will ﬁnd all matching vertices, and yield one new gremlin at a time until it has worked through them.
-"""
+            if not len(state.edges):  # all done
+                return 'pull'
+
+            vertex = state.edges.pop()[edge_list]  # use up an edge
+
+            return graph.gotoVertex(state.gremlin, vertex)
+
+        return partial(traverse(graph=self.graph))
+
+    @_generative
+    def traversal_in_pipe(self, graph, args, gremlin, state):
+        if not gremlin and (not state.edges or not len(state.edges)):
+            return 'pull'
+
+        if not state.edges or not len(state.edges):  # state initialization
+            state.gremlin = gremlin
+            state.edges = graph['findInEdges'](gremlin.vertex).filter(graph.filterEdges(args[0]))
+
+        if not len(state.edges):  # all done
+            return 'pull'
+
+        vertex = state.edges.pop()['_in']  # use up an edge
+
+        return graph.gotoVertex(state.gremlin, vertex)
+
+    @_generative
+    def traversal_out_pipe(self, graph, args, gremlin, state):
+        if not gremlin and (not state.edges or not len(state.edges)):
+            return 'pull'
+
+        if not state.edges or not len(state.edges):  # state initialization
+            state.gremlin = gremlin
+            state.edges = graph['findOutEdges'](gremlin.vertex).filter(graph.filterEdges(args[0]))
+
+        if not len(state.edges):  # all done
+            return 'pull'
+
+        vertex = state.edges.pop()['_out']  # use up an edge
+
+        return graph.gotoVertex(state.gremlin, vertex)
+    """
+
+        if(!state.edges || !state.edges.length) {                     # state initialization
+          state.gremlin = gremlin
+          state.edges = graph[find_method](gremlin.vertex)            # get edges that match our query
+                             .filter(Dagoba.filterEdges(args[0]))
+        }
+
+        if(!state.edges.length)                                       # all done
+          return 'pull'
+
+        var vertex = state.edges.pop()[edge_list]                     # use up an edge
+        return Dagoba.gotoVertex(state.gremlin, vertex)
+      }
+    }
+
+    Dagoba.addPipetype('in',  Dagoba.simpleTraversal('in'))
+    Dagoba.addPipetype('out', Dagoba.simpleTraversal('out'))
+    """
+    #Dagoba.Pipetypes = {}                                             # every pipe has a type
+
+    """
+    The pipetype’s function is added to the list of pipetypes, and then a new method is added to the query object.
+    Every pipetype must have a corresponding query method. That method adds a new step to the query program,
+    along with its arguments. When we evaluate the call returns a query object,
+    the call adds a new step and returns the query object, and the call does the same.
+    This is what enables our method-chaining API.
+
+    Note that adding a new pipetype with the same name replaces the existing one,
+    which allows run- time modiﬁcation of existing pipetypes.
+    What’s the cost of this decision? What are the alternatives?
+    """
+
+    """
+    # BUILT-IN PIPE TYPES
+    """
+
+    """
+    Most pipetypes we meet will take a gremlin and produce more gremlins,
+    but this particular pipetype generates gremlins from just a string.
+    Given an vertex ID it returns a single new gremlin.
+    Given a query it will ﬁnd all matching vertices, and yield one new gremlin at a time until it has worked through them.
+    """
+
+    def vertex_pipe(self, graph, args, gremlin, state):
+        if not state.vertices:
+            state.vertices = graph.findVertices(args)                     # state initialization
+
+        if len(state.vertices) == 0:                                      # all done
+            return 'done'
+
+        vertex = state.vertices.pop()                               # OPT: this relies on cloning the vertices
+        return graph.makeGremlin(vertex, gremlin.state)                # we can have incoming gremlins from as/back queries
+
+
 
 """
 Dagoba.addPipetype('vertex', function(graph, args, gremlin, state) {

@@ -1,30 +1,27 @@
 
 class Vertex(object):
 
-    def __init__(self, name, id=None):
-        self.id = id
-        self.name = name
+    def __init__(self, vertex_name=None, vertex_id=None):
+        self.vertex_id = vertex_id
+        self.name = vertex_name
         self.v_in = []
         self.v_out = []
 
     @property
-    def id(self):
-        return self.id
+    def vertex_id(self):
+        return self._vertex_id
 
-    @id.setter
-    def id(self, id):
-        self.id = id
-
-    def get_id(self):
-        return self.id
+    @vertex_id.setter
+    def vertex_id(self, value):
+        self._vertex_id = value
 
     @property
     def name(self):
-        return self.name
+        return self._name
 
     @name.setter
-    def name(self, name):
-        self.name = name
+    def name(self, value):
+        self._name = value
 
     def add_out(self, edge):
         """
@@ -38,16 +35,16 @@ class Vertex(object):
 
     @property
     def v_out(self):
-        return self.v_out
+        return self._v_out
 
     @property
     def v_in(self):
-        return self.v_in
+        return self._v_in
 
     @v_out.setter
-    def v_out(self, _out):
-        self.v_out = _out
+    def v_out(self, value):
+        self._v_out = value
 
     @v_in.setter
-    def v_in(self, _in):
-        self.v_in = _in
+    def v_in(self, value):
+        self._v_in = value

@@ -1,5 +1,21 @@
 from collections import namedtuple
-from graphdb.graphdb import GraphDB
+from functools import wraps
+
+
+class GenerativeBase(object):
+    def _generate(self):
+        s = self.__class__.__new__(self.__class__)
+        s.__dict__ = self.__dict__.copy()
+        return s
+
+
+def _generative(func):
+    @wraps(func)
+    def decorator(self, *args, **kw):
+        new_self = self._generate()
+        func(new_self, *args, **kw)
+        return new_self
+    return decorator
 
 Step = namedtuple('Step', 'pipe_type, args')
 
@@ -11,15 +27,21 @@ class Query:
         self.state = []         # state for each step
         self.program = []       # list of steps to take
         self.gremlins = []      # gremlins for each step
+        self.pipetypes = {}
+
+    def __getattr__(self, name):
+        print(name)
+        return self.pipetypes[name]
 
     def add(self, pipe_type, args):
         step = Step(pipe_type=pipe_type, args=args)
         print("Add Step: " + str(step))
         self.program.append(step)
-        return self  # Todo: Not sure about this
+        self.pipetypes[pipe_type] = args
+        return self
 
     def run(self):
-        self.program = GraphDB.transform(self.program)
+        self.program = self.graph.transform(self.program)
         prog_len = len(self.program) - 1
         maybe_gremlin = False
         pc = prog_len
@@ -33,10 +55,32 @@ class Query:
 
             step = self.program[pc]
             state = self.state[pc] or []
-            pipetype = GraphDB.get_pipe_type()
+            pipetype = self.graph.get_pipe_type(step[0])  # Pipetype is a function # TODO: should this call back to graph
+            maybe_gremlin = pipetype(self.graph, step[1], maybe_gremlin, state)
 
+            if maybe_gremlin == 'pull':  # 'pull' tells us the pipe wants further input
+                maybe_gremlin = False
+                if pc-1 > done:
+                    pc -= 1  # try the previous pipe
+                    continue
+                else:
+                    done = pc  # previous pipe is finished, so we are too
 
+            if maybe_gremlin == 'done':  # 'done' tells us the pipe is finished
+                maybe_gremlin = False
+                done = pc
 
+            pc += 1
+
+            if pc > max:
+                if maybe_gremlin:
+                    results.append(maybe_gremlin)  # a gremlin popped out the end of the pipeline
+                    maybe_gremlin = False
+                    pc -= 1  # take a step back
+
+            results = [gremlin.result if gremlin.result else gremlin.vertex for gremlin in results]
+
+            return results
 
 """
 Dagoba.Q.run = function() {                                       # our virtual machine for query processing

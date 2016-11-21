@@ -1,15 +1,11 @@
 from graph import Graph
-from transformer import Transformer
 import json
 
 
 class GraphDB:
 
-    def __init__(self):
-        self._graph = {}
-        self._pipetypes = {}
-        self._Q = {}
-        self._T = Transformer()
+    def __init__(self, instance_name='Default'):
+        self.instance_name = instance_name
 
     @staticmethod
     def from_string(s):
@@ -19,128 +15,17 @@ class GraphDB:
         :return:
         """
         obj = json.loads(s)
-        return GraphDB.graph(v=obj.V, e=obj.E)
+        return GraphDB.graph(e=obj.E)
 
     @staticmethod
-    def make_gremlin(vertex, state):
-        """
-        A gremlin is a creature that travels through the graph doing our bidding.
-        :param vertex:
-        :param state:
-        :return:
-        """
-        return {vertex: vertex, state: state or {}}
-
-    @staticmethod
-    def goto_vertex(gremlin, vertex):
-        """
-
-        :param gremlin:
-        :param vertex:
-        :return:
-        """
-        return GraphDB.make_gremlin(vertex, gremlin.state)
-
-    @staticmethod
-    def filter_edges(edge, ofilter):
-        """
-
-        :param edge:
-        :param ofilter:
-        :return:
-        """
-        if not ofilter:
-            return True
-        if type(ofilter) is str:
-            return edge.get_label() == ofilter
-        if type(ofilter) is list:
-            return any(item == edge.get_label() for item in ofilter)
-
-        return GraphDB.object_filter(edge, ofilter)
-
-    def add_pipe_type(self, name, func, *args):
-        """
-        Add a pipe to the query.
-        :param name:
-        :param func:
-        :param args:
-        :return:
-        """
-        self._pipetypes[name] = func
-        self._Q[name].add(name, args)  # add the pipetype and args to the query.
-
-    def get_pipe_type(self, name):
-        """
-        Get the pipetype
-        :param name:
-        :return:
-        """
-        pipetype = self._pipetypes[name]
-
-        if not pipetype:
-            raise "Unknown PipeType: " + name
-
-        return pipetype or GraphDB.faux_pipe
-
-    @staticmethod
-    def faux_pipe(graph, args, maybe_gremlin):                 # if you can't find a pipe type
-        """
-        Create a new faux pipe
-        :param graph:
-        :param args:
-        :param maybe_gremlin:
-        :return:
-        """
-        return maybe_gremlin or 'pull'                                  # just keep things flowing along
-
-    @staticmethod
-    def object_filter(thing, ofilter):
-        """
-
-        :param thing:
-        :param ofilter:
-        :return:
-        """
-        return all(thing[key] == ofilter[key] for key in ofilter)
-
-    @classmethod
-    def clean_vertex(cls, key, value):
-        pass
-
-    @classmethod
-    def clean_edge(cls, key, value):
-        pass
-
-    @classmethod
-    def jsonify(cls, graph):
-        # Todo: This should only write valid parts.
-        return '{"V":' + json.dumps(graph.vertices) + ',"E":' + json.dumps(graph.edges) + '}'
-
-    @classmethod
-    def persist(cls, graph, name):
-        pass  # Todo
-
-    @classmethod
-    def depersist(cls, name):
-        pass  # Todo
-
-    @staticmethod
-    def error(msg):
-        """
-        Todo: add logging.
-        :param msg:
-        :return:
-        """
-        pass
-
-    def graph(self, v, e):
+    def graph(v, e):
         """
         Factory for the creation of Graphs.
         :param v: vertices
         :param e: edges
         :return: Graph
         """
-        mygraph = Graph(self)  # Setup of Graph is in __init__
+        mygraph = Graph()  # Setup of Graph is in __init__
 
         if isinstance(v, str):
             vertices = json.loads(v)
@@ -162,5 +47,4 @@ class GraphDB:
 
         return mygraph
 
-    def transform(self, program):
-        return self._T.transform(program)
+
