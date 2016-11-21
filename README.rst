@@ -13,5 +13,5 @@ Links
 - Project: https://github.com/jgraham20/graphdb
 - TravisCI: https://travis-ci.org/jgraham20/graphdb
 
-.. |travis| image:: http://img.shields.io/travis/jgraham20/graphdb/master.svg?style=flat-square
+.. image:: http://img.shields.io/travis/jgraham20/graphdb/master.svg?style=flat-square
     :target: https://travis-ci.org/jgraham20/pydash
