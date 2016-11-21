@@ -151,3 +151,4 @@ docs/
 graphdb/Test.py
 graphdb/introspected.py
 tests/test.js
+/graphdb.egg-info/
